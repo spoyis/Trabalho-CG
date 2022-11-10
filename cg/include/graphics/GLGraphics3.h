@@ -37,6 +37,7 @@
 #include "graphics/GLGraphicsBase.h"
 #include "graphics/GLMesh.h"
 #include <functional>
+#include "geometry/Generatrix.h"
 
 namespace cg
 { // begin namespace cg
@@ -44,135 +45,142 @@ namespace cg
 //
 // Auxiliary functions
 //
-inline auto
-TRS(const vec3f& p, const mat3f& r, const vec3f& s)
-{
-  mat4f t{r, p};
+    inline auto
+        TRS(const vec3f& p, const mat3f& r, const vec3f& s)
+    {
+        mat4f t{ r, p };
 
-  t[0] *= s.x;
-  t[1] *= s.y;
-  t[2] *= s.z;
-  return t;
-}
+        t[0] *= s.x;
+        t[1] *= s.y;
+        t[2] *= s.z;
+        return t;
+    }
 
-inline auto
-normalMatrix(const mat3f& r, const vec3f& s)
-{
-  auto n = r;
+    inline auto
+        normalMatrix(const mat3f& r, const vec3f& s)
+    {
+        auto n = r;
 
-  n[0] *= math::inverse(s.x);
-  n[1] *= math::inverse(s.y);
-  n[2] *= math::inverse(s.z);
-  return n;
-}
+        n[0] *= math::inverse(s.x);
+        n[1] *= math::inverse(s.y);
+        n[2] *= math::inverse(s.z);
+        return n;
+    }
 
 
-/////////////////////////////////////////////////////////////////////
-//
-// GLGraphics3: OpenGL 3D graphics class
-// ===========
-class GLGraphics3: public GLGraphicsBase, public virtual SharedObject
-{
-public:
-  static TriangleMesh* circle();
-  static TriangleMesh* quad();
-  static TriangleMesh* box();
-  static TriangleMesh* cone();
-  static TriangleMesh* sphere();
-  static TriangleMesh* cylinder();
+    /////////////////////////////////////////////////////////////////////
+    //
+    // GLGraphics3: OpenGL 3D graphics class
+    // ===========
+    class GLGraphics3 : public GLGraphicsBase, public virtual SharedObject
+    {
+    public:
+        static TriangleMesh* circle();
+        static TriangleMesh* quad();
+        static TriangleMesh* box();
+        static TriangleMesh* cone();
+        static TriangleMesh* sphere();
+        static TriangleMesh* cylinder();
+        void drawPolygonGeneratrix(long dim) {
+            PolygonGeneratrix g(dim);
+            auto c = g.get();
 
-  // Default constructor.
-  GLGraphics3();
+            for (long i = 0; i < g.size() - 1; i++) {
+                drawLine(c[i], c[i + 1]);
+            }
+            drawLine(c[g.size() - 1], c[0]);
+        }
+        // Default constructor.
+        GLGraphics3();
 
-  const auto& meshColor() const
-  {
-    return _meshColor;
-  }
+        const auto& meshColor() const
+        {
+            return _meshColor;
+        }
 
-  void setMeshColor(const Color& color)
-  {
-    _meshColor = color;
-  }
+        void setMeshColor(const Color& color)
+        {
+            _meshColor = color;
+        }
 
-  const auto& gridColor() const
-  {
-    return _gridColor;
-  }
+        const auto& gridColor() const
+        {
+            return _gridColor;
+        }
 
-  void setGridColor(const Color& color)
-  {
-    _gridColor = color;
-  }
+        void setGridColor(const Color& color)
+        {
+            _gridColor = color;
+        }
 
-  void setVectorColor(const Color& color)
-  {
-    setLineColor(_meshColor = color);
-  }
+        void setVectorColor(const Color& color)
+        {
+            setLineColor(_meshColor = color);
+        }
 
-  void drawMesh(const TriangleMesh&, const mat4f&, const mat3f&);
-  void drawMesh(const TriangleMesh&, const vec3f&, const mat3f&, const vec3f&);
+        void drawMesh(const TriangleMesh&, const mat4f&, const mat3f&);
+        void drawMesh(const TriangleMesh&, const vec3f&, const mat3f&, const vec3f&);
 
-  void drawMesh(const TriangleMesh& mesh)
-  {
-    drawMesh(mesh, mat4f::identity(), mat3f::identity());
-  }
+        void drawMesh(const TriangleMesh& mesh)
+        {
+            drawMesh(mesh, mat4f::identity(), mat3f::identity());
+        }
 
-  void drawPoint(const vec3f&);
-  void drawLine(const vec3f&, const vec3f&);
-  void drawTriangle(const vec3f&, const vec3f&, const vec3f&);
-  void drawQuad(const vec3f&, const vec3f&, const vec3f&, const vec3f&);
-  void drawCircle(const vec3f&, float, const vec3f&);
-  void drawArc(const vec3f&, float, const vec3f&, const vec3f&, float);
-  void drawVector(const vec3f&, const vec3f&, float);
-  void drawNormals(const TriangleMesh&, const mat4f&, const mat3f&, float = 1);
-  void drawAxes(const vec3f&, const mat3f&, float = 1);
-  void drawBounds(const Bounds3f&, const mat4f&);
-  void drawBounds(const Bounds3f&);
-  void drawXZPlane(float, float);
+        void drawPoint(const vec3f&);
+        void drawLine(const vec3f&, const vec3f&);
+        void drawTriangle(const vec3f&, const vec3f&, const vec3f&);
+        void drawQuad(const vec3f&, const vec3f&, const vec3f&, const vec3f&);
+        void drawCircle(const vec3f&, float, const vec3f&);
+        void drawArc(const vec3f&, float, const vec3f&, const vec3f&, float);
+        void drawVector(const vec3f&, const vec3f&, float);
+        void drawNormals(const TriangleMesh&, const mat4f&, const mat3f&, float = 1);
+        void drawAxes(const vec3f&, const mat3f&, float = 1);
+        void drawBounds(const Bounds3f&, const mat4f&);
+        void drawBounds(const Bounds3f&);
+        void drawXZPlane(float, float);
 
-  void setCameraLightOffset(const vec3f& offset)
-  {
-    _lightOffset = offset;
-  }
+        void setCameraLightOffset(const vec3f& offset)
+        {
+            _lightOffset = offset;
+        }
 
-  void setView(const vec3f& position, const mat4f& vpMatrix)
-  {
-    _lightPosition = position + _lightOffset;
-    _vpMatrix = vpMatrix;
-  }
+        void setView(const vec3f& position, const mat4f& vpMatrix)
+        {
+            _lightPosition = position + _lightOffset;
+            _vpMatrix = vpMatrix;
+        }
 
-  void updateView(Camera& camera)
-  {
-    camera.update();
-    setView(camera.position(), vpMatrix(&camera));
-  }
+        void updateView(Camera& camera)
+        {
+            camera.update();
+            setView(camera.position(), vpMatrix(&camera));
+        }
 
-  void setFlatMode(bool value)
-  {
-    _flatMode = value;
-  }
+        void setFlatMode(bool value)
+        {
+            _flatMode = value;
+        }
 
-private:
-  using Base = GLGraphicsBase;
+    private:
+        using Base = GLGraphicsBase;
 
-  GLSL::Program _meshDrawer;
-  mat4f _vpMatrix;
-  vec3f _lightOffset;
-  vec3f _lightPosition;
-  GLint _flatMode;
-  GLint _transformLoc;
-  GLint _normalMatrixLoc;
-  GLint _vpMatrixLoc;
-  GLint _lightPositionLoc;
-  GLint _colorLoc;
-  GLint _flatModeLoc;
-  Color _meshColor;
-  Color _gridColor;
+        GLSL::Program _meshDrawer;
+        mat4f _vpMatrix;
+        vec3f _lightOffset;
+        vec3f _lightPosition;
+        GLint _flatMode;
+        GLint _transformLoc;
+        GLint _normalMatrixLoc;
+        GLint _vpMatrixLoc;
+        GLint _lightPositionLoc;
+        GLint _colorLoc;
+        GLint _flatModeLoc;
+        Color _meshColor;
+        Color _gridColor;
+        void drawPolyline(const vec3f*, int, const mat4f&, bool = false);
+        void drawAxis(const vec3f&, const vec3f&, float, TriangleMesh&);
 
-  void drawPolyline(const vec3f*, int, const mat4f&, bool = false);
-  void drawAxis(const vec3f&, const vec3f&, float, TriangleMesh&);
-
-}; // GLGraphics3
+    }; // GLGraphics3
 
 } // end namespace cg
 

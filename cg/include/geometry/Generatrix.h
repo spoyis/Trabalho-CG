@@ -26,7 +26,7 @@ namespace cg
 			vertexArr[occupied++].set(x, y, z);
 		}
 
-		auto operator[](long index) {
+		auto& operator[](long index) {
 			return vertexArr[index];
 		}
 
@@ -68,8 +68,28 @@ namespace cg
 	};
 
 	class ArchGeneratrix : public Generatrix {
-		ArchGeneratrix(long cuts, int angle) : Generatrix(1) {
-			//	if angle < 0 angle = 1;
+	public:
+		ArchGeneratrix(long segments, float angle) : Generatrix(angle == 360 ? segments : segments + 1) {
+			if (angle < 0) angle = 1.0F;
+			if (angle > 360) angle = 360.0F;
+			auto vertices = (angle == 360.0F) ? segments : segments + 1;
+
+			constexpr auto pi = math::pi<float>();
+			angle = (pi * angle) / 180.0F;
+
+			auto angleStep = angle / segments;
+			auto cosStep = cos(angleStep);
+			auto sinStep = sin(angleStep);
+
+			auto x = sin(angle / 2.0);
+			auto y = cos(angle / 2.0);
+			while (vertices--) {
+				add(x, y, 0);
+				auto nextX = cosStep * x - sinStep * y;
+				auto nextY = sinStep * x + cosStep * y;
+				x = nextX;
+				y = nextY;
+			}
 		}
 	};
 

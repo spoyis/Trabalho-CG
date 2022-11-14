@@ -41,7 +41,7 @@ MainWindow::MainWindow(int width, int height) :
     Base{ "Ds template", width, height }
 {
     // Put your code here. Example:
-    _lineColor = cg::Color::red;
+    _lineColor = cg::Color::yellow;
     _meshColor = cg::Color::blue;
     _radius = 1;
     _speed = 0.01f;
@@ -76,7 +76,9 @@ MainWindow::renderScene()
     auto g3 = this->g3();
 
     g3->setLineColor(_lineColor);
-    g3->drawPolygonGeneratrix(3);
+
+    ArchGeneratrix g(5, 180);
+    g3->drawGeneratrix(g);
 
 
     if (_showGround)

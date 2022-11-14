@@ -81,8 +81,7 @@ namespace cg
         static TriangleMesh* cone();
         static TriangleMesh* sphere();
         static TriangleMesh* cylinder();
-        void drawPolygonGeneratrix(long dim) {
-            PolygonGeneratrix g(dim);
+        void drawGeneratrix(Generatrix& g) {
             auto c = g.get();
 
             for (long i = 0; i < g.size() - 1; i++) {

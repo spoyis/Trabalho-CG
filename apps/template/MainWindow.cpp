@@ -31,7 +31,7 @@
 // Last revision: 07/11/2022
 
 #include "MainWindow.h"
-
+#include "geometry/GeneratrixSweeper.h"
 
 /////////////////////////////////////////////////////////////////////
 //
@@ -41,8 +41,8 @@ MainWindow::MainWindow(int width, int height) :
     Base{ "Ds template", width, height }
 {
     // Put your code here. Example:
-    _lineColor = cg::Color::yellow;
-    _meshColor = cg::Color::blue;
+    _lineColor = cg::Color::black;
+    _meshColor = cg::Color::white;
     _radius = 1;
     _speed = 0.01f;
 }
@@ -67,6 +67,14 @@ MainWindow::update()
         _radius = 1 + cosf(_speed * (time += deltaTime()) * 0.5f);
 }
 
+
+float w_e = 1, s_x = 1, s_y = 1, r_e = 2;
+long n_se = 40;
+float delta_he = 5, delta_we = 2;
+float angle = 260;
+long points = 5;
+static int selectedGeneratrix = 1;
+
 void
 MainWindow::renderScene()
 {
@@ -76,17 +84,29 @@ MainWindow::renderScene()
     auto g3 = this->g3();
 
     g3->setLineColor(_lineColor);
+    g3->setMeshColor(_meshColor);
+    Generatrix* g;
+    ArchGeneratrix garch = ArchGeneratrix(points, angle);
+    PolygonGeneratrix gpoly = PolygonGeneratrix(points);
+    if (selectedGeneratrix) g = &garch; else g = &gpoly;
+    g3->drawGeneratrix(*g);
 
-    ArchGeneratrix g(5, 180);
-    g3->drawGeneratrix(g);
+    
+    bool hasLid = false;
+    SpiralSweeper sweep(*g, w_e, s_x, s_y, r_e, n_se, delta_he, delta_we, hasLid);
+    
+    TriangleMesh* mesh = sweep.get();
+    g3->drawMesh(*mesh);
 
+    
+    for(long step = 0; step < 40; step++)
+    for (long i = 0; i < g->size(); i++) {
+        //g3->drawLine(mesh->data().vertices[step * g.size() + i], mesh->data().vertices[step * g.size() + i + 1]);
+    }
 
     if (_showGround)
         g3->drawXZPlane(8, 1);
 }
-//Severity	Code	Description	Project	File	Line	Suppression State
-//Error	LNK2019	unresolved external symbol 
-//"public: void __cdecl cg::GLGraphics3::drawPolygonGeneratrix(long)" (? drawPolygonGeneratrix@GLGraphics3@cg@@QEAAXJ@Z) referenced in function "private: virtual void __cdecl MainWindow::renderScene(void)" (? renderScene@MainWindow@@EEAAXXZ)	myapp	C : \Users\spOy\source\repos\trab_CG\apps\template\build\vs2022\MainWindow.obj	1
 
 bool
 MainWindow::keyInputEvent(int key, int action, int mods)
@@ -118,5 +138,27 @@ MainWindow::gui()
     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
         deltaTime(),
         ImGui::GetIO().Framerate);
+    ImGui::End();
+
+
+    static const char* generatrixTypes[] = { "Poligon", "Arch" };
+    
+
+    ImGui::SetNextWindowSize({ 360, 270 });
+    ImGui::Begin("Sweep menu");
+
+    ImGui::Combo("Generatrix type", &selectedGeneratrix, generatrixTypes, IM_ARRAYSIZE(generatrixTypes));
+    if(selectedGeneratrix == 1)
+        ImGui::SliderFloat("angle", &angle, 1.0f, 360.0f);
+    ImGui::SliderInt("segments", (int*) &points, 2.0, 30);
+
+    ImGui::Separator();
+    ImGui::SliderFloat("Initial length", &w_e, 2.0f, 100.0f);
+    ImGui::SliderFloat("x scale", &s_x, 0.2f, 10.0f);
+    ImGui::SliderFloat("y scale", &s_y, 0.2f, 10.0f);
+    ImGui::SliderFloat("rotations", &r_e, 0.5f, 20.0f);
+    ImGui::SliderInt("segments per rotation", (int*) &n_se, 3, 40);
+    ImGui::SliderFloat("height variation", &delta_he, 0.0f, 10.0f);
+    ImGui::SliderFloat("length variation", &delta_we, 0.0f, 10.0f);
     ImGui::End();
 }

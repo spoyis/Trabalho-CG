@@ -112,6 +112,7 @@
     <ClInclude Include="..\..\include\geometry\Bounds3.h" />
     <ClInclude Include="..\..\include\geometry\BVH.h" />
     <ClInclude Include="..\..\include\geometry\Generatrix.h" />
+    <ClInclude Include="..\..\include\geometry\GeneratrixSweeper.h" />
     <ClInclude Include="..\..\include\geometry\Grid2.h" />
     <ClInclude Include="..\..\include\geometry\Grid3.h" />
     <ClInclude Include="..\..\include\geometry\GridBase.h" />

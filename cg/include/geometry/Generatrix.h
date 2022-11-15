@@ -3,43 +3,70 @@
 
 namespace cg
 { // begin namespace cg
-	class Generatrix {
+	class Generatrix 
+	{// begin class Generatrix
 	public:
 		Generatrix(long sz) {
 			this->maxSize = sz;
-			vertexArr = new vec3f[maxSize];
+			vertexArr = new vec3f[maxSize + 1];
 		}
 
 		~Generatrix() {
 			delete vertexArr;
 		}
 
+		struct WrappingBox {
+			float b_x;
+			float b_y;
+		};
+
 		void add(float x, float y, float z) {
-#ifdef _DEBUG
+			#ifdef _DEBUG
 			if (occupied == maxSize)
 			{
 				std::cout << "MANO CÊ FEZ DODOI, ALOCOU ESPACO INSUFICIENTE NA GERATRIZ\n";
 				return;
 			}
-#endif // DEBUG
+			#endif // DEBUG
 
 			vertexArr[occupied++].set(x, y, z);
 		}
 
-		auto& operator[](long index) {
-			return vertexArr[index];
+		void repeatFirstVertex() {
+			vertexArr[maxSize] = vertexArr[0];
 		}
 
-		auto get() {
-			return vertexArr;
-		}
-
-		auto size() { return occupied; }
+		auto& operator[](long index) { return vertexArr[index];}
+		auto get() {return vertexArr;}
+		auto size() {return occupied;}
+		auto getWrappingBox() {return wrappingBox;}
+		auto getAngle() { return angle; }
+		
 	private:
 		long occupied{ 0 };
 		long maxSize;
 		vec3f* vertexArr;
-	};
+		WrappingBox wrappingBox;
+		float angle;
+	protected:
+		void setWrappingBox() {
+			float minX = FLT_MAX, maxX = -FLT_MAX;
+			float minY = FLT_MAX, maxY = -FLT_MAX;
+			
+			for (long i = 0; i < occupied; i++) {
+				minX = std::min(minX, vertexArr[i].x);
+				minY = std::min(minY, vertexArr[i].y);
+
+				maxX = std::max(maxX, vertexArr[i].x);
+				maxY = std::max(maxY, vertexArr[i].y);
+			}
+
+			auto b_x = maxX - minX;
+			auto b_y = maxY - minY;
+			wrappingBox = { b_x, b_y };
+		}
+		void setAngle(float theta) { angle = theta; }
+	}; // end class Generatrix
 
 	class PolygonGeneratrix : public Generatrix {
 	public:
@@ -64,6 +91,10 @@ namespace cg
 					add(x, y, 0);
 				}
 			}
+
+			repeatFirstVertex();
+			setWrappingBox();
+			setAngle(360.0F);
 		}
 	};
 
@@ -72,6 +103,7 @@ namespace cg
 		ArchGeneratrix(long segments, float angle) : Generatrix(angle == 360 ? segments : segments + 1) {
 			if (angle < 0) angle = 1.0F;
 			if (angle > 360) angle = 360.0F;
+			setAngle(angle);
 			auto vertices = (angle == 360.0F) ? segments : segments + 1;
 
 			constexpr auto pi = math::pi<float>();
@@ -90,7 +122,12 @@ namespace cg
 				x = nextX;
 				y = nextY;
 			}
+
+			repeatFirstVertex();
+			setWrappingBox();
 		}
+
+		
 	};
 
 } // end namespace cg

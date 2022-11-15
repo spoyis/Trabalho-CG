@@ -84,10 +84,9 @@ namespace cg
         void drawGeneratrix(Generatrix& g) {
             auto c = g.get();
 
-            for (long i = 0; i < g.size() - 1; i++) {
+            for (long i = 0; i <= g.size() - 1; i++) {
                 drawLine(c[i], c[i + 1]);
             }
-            drawLine(c[g.size() - 1], c[0]);
         }
         // Default constructor.
         GLGraphics3();

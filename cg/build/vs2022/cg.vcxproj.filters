@@ -368,6 +368,9 @@
     <ClInclude Include="..\..\include\geometry\Generatrix.h">
       <Filter>Header Files\geometry</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\geometry\GeneratrixSweeper.h">
+      <Filter>Header Files\geometry</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\externals\src\gl3w.c">

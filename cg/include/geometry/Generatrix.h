@@ -34,6 +34,7 @@ namespace cg
 
 		void repeatFirstVertex() {
 			vertexArr[maxSize] = vertexArr[0];
+			closedGeneratrix = true;
 		}
 
 		auto& operator[](long index) { return vertexArr[index];}
@@ -41,6 +42,7 @@ namespace cg
 		auto size() {return occupied;}
 		auto getWrappingBox() {return wrappingBox;}
 		auto getAngle() { return angle; }
+		auto isClosed() { return closedGeneratrix; }
 		
 	private:
 		long occupied{ 0 };
@@ -48,6 +50,7 @@ namespace cg
 		vec3f* vertexArr;
 		WrappingBox wrappingBox;
 		float angle;
+		bool closedGeneratrix{false};
 	protected:
 		void setWrappingBox() {
 			float minX = FLT_MAX, maxX = -FLT_MAX;
@@ -100,7 +103,7 @@ namespace cg
 
 	class ArchGeneratrix : public Generatrix {
 	public:
-		ArchGeneratrix(long segments, float angle) : Generatrix(angle == 360 ? segments : segments + 1) {
+		ArchGeneratrix(long segments, float angle, bool closed) : Generatrix(angle == 360 ? segments : segments + 1) {
 			if (angle < 0) angle = 1.0F;
 			if (angle > 360) angle = 360.0F;
 			setAngle(angle);
@@ -123,7 +126,7 @@ namespace cg
 				y = nextY;
 			}
 
-			repeatFirstVertex();
+			if(closed)repeatFirstVertex();
 			setWrappingBox();
 		}
 

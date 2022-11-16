@@ -68,12 +68,23 @@ MainWindow::update()
 }
 
 
+// spiral sweeper
 float w_e = 1, s_x = 1, s_y = 1, r_e = 2;
 long n_se = 40;
 float delta_he = 5, delta_we = 2;
+
+// generatrix
 float angle = 260;
 long points = 5;
+
+// imgui
 static int selectedGeneratrix = 1;
+static int selectedSweepType = 0;
+
+float l_v = 1, o_wv = 0, o_hv = 0;
+long n_sv = 20;
+float s_bv = 2, s_ev = 2, r_v = 0;
+bool closed = true;
 
 void
 MainWindow::renderScene()
@@ -86,16 +97,18 @@ MainWindow::renderScene()
     g3->setLineColor(_lineColor);
     g3->setMeshColor(_meshColor);
     Generatrix* g;
-    ArchGeneratrix garch = ArchGeneratrix(points, angle);
+    ArchGeneratrix garch = ArchGeneratrix(points, angle, closed);
     PolygonGeneratrix gpoly = PolygonGeneratrix(points);
     if (selectedGeneratrix) g = &garch; else g = &gpoly;
     g3->drawGeneratrix(*g);
 
-    
+    TriangleMesh* mesh;
     bool hasLid = false;
-    SpiralSweeper sweep(*g, w_e, s_x, s_y, r_e, n_se, delta_he, delta_we, hasLid);
+    SpiralSweeper spiralSweep(*g, w_e, s_x, s_y, r_e, n_se, delta_he, delta_we, hasLid);
+    TwistSweeper twistsweep(*g, l_v, o_wv, o_hv, n_sv, s_bv, s_ev, r_v, hasLid);
+    mesh = selectedSweepType ? spiralSweep.get() : twistsweep.get();
     
-    TriangleMesh* mesh = sweep.get();
+
     g3->drawMesh(*mesh);
 
     
@@ -142,23 +155,40 @@ MainWindow::gui()
 
 
     static const char* generatrixTypes[] = { "Poligon", "Arch" };
-    
+    static const char* sweepTypes[] = { "Twist", "Spiral" };
 
     ImGui::SetNextWindowSize({ 360, 270 });
     ImGui::Begin("Sweep menu");
-
+    
     ImGui::Combo("Generatrix type", &selectedGeneratrix, generatrixTypes, IM_ARRAYSIZE(generatrixTypes));
-    if(selectedGeneratrix == 1)
+    if (selectedGeneratrix == 1)
+    {
+        ImGui::Checkbox("Closed arch", &closed);
         ImGui::SliderFloat("angle", &angle, 1.0f, 360.0f);
+    }
     ImGui::SliderInt("segments", (int*) &points, 2.0, 30);
 
     ImGui::Separator();
-    ImGui::SliderFloat("Initial length", &w_e, 2.0f, 100.0f);
-    ImGui::SliderFloat("x scale", &s_x, 0.2f, 10.0f);
-    ImGui::SliderFloat("y scale", &s_y, 0.2f, 10.0f);
-    ImGui::SliderFloat("rotations", &r_e, 0.5f, 20.0f);
-    ImGui::SliderInt("segments per rotation", (int*) &n_se, 3, 40);
-    ImGui::SliderFloat("height variation", &delta_he, 0.0f, 10.0f);
-    ImGui::SliderFloat("length variation", &delta_we, 0.0f, 10.0f);
+    ImGui::Combo("Sweep type", &selectedSweepType, sweepTypes, IM_ARRAYSIZE(sweepTypes));
+    if(selectedSweepType == 1){
+        
+        ImGui::SliderFloat("Initial length", &w_e, 2.0f, 100.0f);
+        ImGui::SliderFloat("x scale", &s_x, 0.2f, 10.0f);
+        ImGui::SliderFloat("y scale", &s_y, 0.2f, 10.0f);
+        ImGui::SliderFloat("rotations", &r_e, 0.5f, 20.0f);
+        ImGui::SliderInt("segments per rotation", (int*) &n_se, 3, 40);
+        ImGui::SliderFloat("height variation", &delta_he, 0.0f, 10.0f);
+        ImGui::SliderFloat("length variation", &delta_we, 0.0f, 10.0f);
+    }
+    else {
+		  ImGui::SliderFloat("Length", &l_v, 1.0f, 50.0f);
+		  ImGui::SliderFloat("Horizontal shift", &o_wv, -5.0f, 5.0f);
+		  ImGui::SliderFloat("Vertival shift", &o_hv, -5.0f, 5.0f);
+		  ImGui::SliderFloat("Initial scale", &s_bv, 0.1f, 5.0f);
+		  ImGui::SliderFloat("Final scale", &s_ev, 0.1f, 5.0f);
+		  ImGui::SliderFloat("Twist", &r_v, -2.0f, 2.0f);
+		  ImGui::SliderInt("segments per rotation", (int*)&n_sv, 1, 50);
+    }
+
     ImGui::End();
 }

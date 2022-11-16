@@ -83,8 +83,8 @@ namespace cg
         static TriangleMesh* cylinder();
         void drawGeneratrix(Generatrix& g) {
             auto c = g.get();
-
-            for (long i = 0; i <= g.size() - 1; i++) {
+            auto hi = g.isClosed() ? g.size() : g.size() - 1;
+            for (long i = 0; i < hi; i++) {
                 drawLine(c[i], c[i + 1]);
             }
         }

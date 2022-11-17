@@ -32,7 +32,7 @@
 
 #include "MainWindow.h"
 #include "geometry/GeneratrixSweeper.h"
-
+MainWindow* window;
 /////////////////////////////////////////////////////////////////////
 //
 // MainWindow implementation
@@ -72,7 +72,7 @@ MainWindow::update()
 float w_e = 1, s_x = 1, s_y = 1, r_e = 2;
 long n_se = 40;
 float delta_he = 5, delta_we = 2;
-
+bool hasLid = false;
 // generatrix
 float angle = 260;
 long points = 5;
@@ -100,10 +100,10 @@ MainWindow::renderScene()
     ArchGeneratrix garch = ArchGeneratrix(points, angle, closed);
     PolygonGeneratrix gpoly = PolygonGeneratrix(points);
     if (selectedGeneratrix) g = &garch; else g = &gpoly;
-    g3->drawGeneratrix(*g);
+    //g3->drawGeneratrix(*g);
 
     TriangleMesh* mesh;
-    bool hasLid = false;
+    
     SpiralSweeper spiralSweep(*g, w_e, s_x, s_y, r_e, n_se, delta_he, delta_we, hasLid);
     TwistSweeper twistsweep(*g, l_v, o_wv, o_hv, n_sv, s_bv, s_ev, r_v, hasLid);
     mesh = selectedSweepType ? spiralSweep.get() : twistsweep.get();
@@ -170,6 +170,7 @@ MainWindow::gui()
 
     ImGui::Separator();
     ImGui::Combo("Sweep type", &selectedSweepType, sweepTypes, IM_ARRAYSIZE(sweepTypes));
+    ImGui::Checkbox("has lid", &hasLid);
     if(selectedSweepType == 1){
         
         ImGui::SliderFloat("Initial length", &w_e, 2.0f, 100.0f);

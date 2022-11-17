@@ -32,7 +32,7 @@
 
 #include "graphics/Application.h"
 #include "MainWindow.h"
-
+extern MainWindow* window;
 int
 main(int argc, char** argv)
 {
@@ -45,5 +45,6 @@ main(int argc, char** argv)
     "(scroll wheel)    zoom\n"
     "(middle-click)    pan\n"
     "(Alt+right-click) rotate");
-  return cg::Application{new MainWindow{1280, 720}}.run(argc, argv);
+  window = new MainWindow{ 1280, 720 };
+  return cg::Application{window}.run(argc, argv);
 }

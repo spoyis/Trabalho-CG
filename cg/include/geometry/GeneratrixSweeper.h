@@ -1,9 +1,14 @@
 #pragma once
 #include "geometry/Generatrix.h"
 #include "math/Matrix4x4.h"
+#include "MainWindow.h"
+
+extern MainWindow* window;
 
 namespace cg
 { // begin namespace cg
+
+
 
 class GeneratrixSweeper {
 public:
@@ -16,6 +21,100 @@ protected:
 	void boundaryCheck(T& data, T lo, T hi) {
 		if (data < lo) data = lo;
 		else if (data > hi) data = hi;
+	}
+
+	void initMeshData(TriangleMesh::Data& data, Generatrix& generatrix, long n_p, long n_steps, bool hasLid) {
+		// TODO
+		const auto lidTriangles = (generatrix.getAngle() == 360.0F) ? (n_p - 1) * 2 : (n_p - 2) * 2;
+		// triangles resulting from sweeping
+		const auto sweepTriangles = 2 * (n_p - 1) * (n_steps - 1);
+
+		const auto n_triangles = hasLid ? lidTriangles + sweepTriangles : sweepTriangles;
+		std::cout << "SWEEP TRIANGLES ------> " << sweepTriangles << '\n';
+		std::cout << "lidTriangles --------->" << lidTriangles << '\n';
+		std::cout << "NUMBER OF TRIANGLES --> " << n_triangles << '\n';
+		data.vertexCount = hasLid ? n_p * (n_steps + 2) + 2 : n_p * n_steps;
+		data.vertices = new vec3f[data.vertexCount];
+		data.vertexNormals = new vec3f[data.vertexCount];
+		data.triangleCount = n_triangles;
+		data.triangles = new TriangleMesh::Triangle[data.triangleCount];
+	}
+
+	void buildTriangles(TriangleMesh::Data& data, long n_steps, long n_p) {
+		auto triangle = data.triangles;
+
+		for (int g = 0; g < n_steps - 1; ++g)
+		{
+			auto i = g * n_p;
+			auto j = i + n_p;
+
+			for (int v = 0; v < n_p - 1; ++v, ++i, ++j)
+			{
+				auto k = i + 1;
+
+				triangle++->setVertices(i, j, k);
+				triangle++->setVertices(k, j, j + 1);
+			}
+		}
+
+
+	}
+
+	void buildLid(TriangleMesh::Data& data, Matrix<float, 4, 4> R, long n_p, long n_steps, bool np_offset) {
+
+		const long lastVertex = n_p * n_steps;
+		vec3f* generatrixPointer[2] = { &data.vertices[0], &data.vertices[lastVertex - n_p] };
+		long start = lastVertex;
+		vec3f normal = { 0,0,1 };
+
+		auto sweepTriangles = 2 * (n_p - 1) * (n_steps - 1);
+		auto triangle = data.triangles + sweepTriangles;
+		auto g3 = window->g3();
+		for (long g = 0; g < 2; g++) 
+		{
+			long end = start + n_p;
+			auto generatrix = generatrixPointer[g];
+
+			auto minX = FLT_MAX, minY = FLT_MAX, minZ = FLT_MAX;
+			auto maxX = -FLT_MAX, maxY = -FLT_MAX, maxZ = -FLT_MAX;
+			for (long i = start; i < end; i++)
+			{
+				//min
+				minX = std::min(minX, generatrix->x);
+				minY = std::min(minY, generatrix->y);
+				minZ = std::min(minZ, generatrix->z);
+				//max
+				maxX = std::max(maxX, generatrix->x);
+				maxY = std::max(maxY, generatrix->y);
+				maxZ = std::max(maxZ, generatrix->z);
+
+				data.vertices[i] = *(generatrix++);
+				data.vertexNormals[i] = normal;
+			}
+			data.vertices[end] = { 
+				minX + (maxX - minX)/2,   // x --> menor ponto em x + wrapping box em x/2
+				minY + (maxY - minY)/2,   // y --> menor ponto em y + wrapping box em y/2
+				minZ + (maxZ - minZ)/2};  // z --> menor ponto em z + wrapping box em z/2
+
+			generatrix = generatrixPointer[g];
+			for (long i = 0; i < n_p - 2 + np_offset; i++)
+			{
+				std::cout << "ADDING TRIANGLE NUMBER " << triangle - data.triangles << '\n';
+				auto index = generatrix++ - generatrixPointer[0];
+				triangle++->setVertices(index, index + 1, end);
+				g3->drawLine(data.vertices[index], data.vertices[index + 1]);
+				g3->drawLine(data.vertices[index], data.vertices[end]);
+				g3->drawLine(data.vertices[index + 1], data.vertices[end]);
+			}
+			
+			start = end + 1;
+			normal = R * vec4f{ normal };
+		}
+	}
+
+	auto toRadian(float angle) {
+		constexpr auto pi = math::pi<float>();
+		return pi * angle / 180;
 	}
 };
 
@@ -41,7 +140,7 @@ public:
 
 		if (!delta_he and !delta_we) hasLid = false;
 
-		long n_re = floor(r_e + 0.5F) * n_se;
+		long n_re = std::max((int)floor(r_e + 0.5F), 1) * n_se;
 		long n_steps = n_re + 1;
 		auto n_p = generatrix.size() + generatrix.isClosed();
 		auto totalDelta_he =  r_e* delta_he;
@@ -49,21 +148,11 @@ public:
 		auto d_e = (w_e - wrappingBox.b_x) / 2;
 		auto theta_e = 360.0F * r_e;
 		
-		auto lidTriangles = (generatrix.getAngle() == 360.0F) ? n_p - 1 : n_p - 2;
-		auto sweepTriangles = 2 * (n_p - 1) * (n_steps - 1);
-		auto n_triangles = hasLid ? lidTriangles + sweepTriangles : sweepTriangles;
-		TriangleMesh::Data data; 
+		TriangleMesh::Data data;
+		initMeshData(data, generatrix, n_p, n_steps, hasLid);
 
-		data.vertexCount = hasLid ? n_p * (n_steps + 2) + 2 : n_p * n_steps; 
-		data.vertices = new vec3f[data.vertexCount]; 
-		data.vertexNormals = new vec3f[data.vertexCount]; 
-		data.triangleCount = n_triangles;
-		data.triangles = new TriangleMesh::Triangle[data.triangleCount]; 
-
-		
 		vec3f S = { s_x, s_y, 1 };
 		long index = 0;
-		
 		for (long k = 0; k < n_steps; k++) 
 		{
 			vec3f T = { d_e + totalDelta_we/n_re * k, totalDelta_he/n_re * k ,0.0F };
@@ -82,30 +171,16 @@ public:
 			
 		}
 
-		auto triangle = data.triangles;
-		
-		for (int g = 0; g < n_steps - 1; ++g)
-		{
-			auto i = g * n_p;
-			auto j = i + n_p;
+		// Rotação completa da varredura
+		Quaternion<float> R = { 0,sin(toRadian(theta_e / 2)),0, cos(toRadian(theta_e / 2)) };
+		auto trs = Matrix<float, 4, 4>::TRS({ 0,0,0 }, R, { 1,1,1 });
 
-			for (int v = 0; v < n_p - 1; ++v, ++i, ++j)
-			{
-				auto k = i + 1;
-
-				triangle++->setVertices(i, j, k);
-				triangle++->setVertices(k, j, j + 1);
-			}
-		}
-
-		mesh =  new TriangleMesh{ std::move(data) };
+		buildTriangles(data, n_steps, n_p);
+		if (hasLid) buildLid(data, trs, n_p, n_steps, generatrix.getAngle() == 360.0F);
+		mesh = new TriangleMesh{ std::move(data) };
 	}
-
-
-private:
-	
-
 }; // end class SpiralSweeper
+
 
 class TwistSweeper : public GeneratrixSweeper
 { // begin class TwistSweeper
@@ -129,22 +204,10 @@ public:
 		auto s_v = s_bv + (s_ev - s_bv) / n_sv * n_steps;
 		auto theta_v = 360.0F * r_v;
 
-
-		auto lidTriangles = (generatrix.getAngle() == 360.0F) ? n_p - 1 : n_p - 2;
-		auto sweepTriangles = 2 * (n_p - 1) * (n_steps - 1);
-		auto n_triangles = hasLid ? lidTriangles + sweepTriangles : sweepTriangles;
 		TriangleMesh::Data data;
-
-		data.vertexCount = hasLid ? n_p * (n_steps + 2) + 2 : n_p * n_steps;
-		data.vertices = new vec3f[data.vertexCount];
-		data.vertexNormals = new vec3f[data.vertexCount];
-		data.triangleCount = n_triangles;
-		data.triangles = new TriangleMesh::Triangle[data.triangleCount];
-
-
+		initMeshData(data, generatrix, n_p, n_steps, hasLid);
 
 		long index = 0;
-
 		for (long k = 0; k < n_steps; k++)
 		{
 			auto scale = s_bv + (s_ev - s_bv) / n_sv * k;
@@ -163,22 +226,12 @@ public:
 				data.vertexNormals[index] = normaltrs * vec4f(generatrix[i]);
 			}
 		}
-		auto triangle = data.triangles;
 
-		for (int g = 0; g < n_steps - 1; ++g)
-		{
-			auto i = g * n_p;
-			auto j = i + n_p;
+		Quaternion<float> R = { 0,0,sin(toRadian(theta_v / 2)), cos(toRadian(theta_v / 2)) };
+		auto trs = Matrix<float, 4, 4>::TRS({ 0,0,0 }, R, { 1,1,1 });
 
-			for (int v = 0; v < n_p - 1; ++v, ++i, ++j)
-			{
-				auto k = i + 1;
-
-				triangle++->setVertices(i, j, k);
-				triangle++->setVertices(k, j, j + 1);
-			}
-		}
-
+		buildTriangles(data, n_steps, n_p);
+		if (hasLid) buildLid(data, trs, n_p, n_steps, generatrix.getAngle() == 360.0F);
 		mesh = new TriangleMesh{ std::move(data) };
 	}
 }; // end class TwistSweeper

@@ -35,7 +35,6 @@
 
 #include "graphics/GLRenderWindow3.h"
 
-
 /////////////////////////////////////////////////////////////////////
 //
 // MainWindow: template main window class
@@ -64,5 +63,6 @@ private:
   void gui() override;
 
 }; // MainWindow
+
 
 #endif // __MainWindow_h

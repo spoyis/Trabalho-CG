@@ -1,9 +1,6 @@
 #pragma once
 #include "geometry/Generatrix.h"
 #include "math/Matrix4x4.h"
-#include "MainWindow.h"
-
-extern MainWindow* window;
 
 namespace cg
 { // begin namespace cg
@@ -30,9 +27,7 @@ protected:
 		const auto sweepTriangles = 2 * (n_p - 1) * (n_steps - 1);
 
 		const auto n_triangles = hasLid ? lidTriangles + sweepTriangles : sweepTriangles;
-		std::cout << "SWEEP TRIANGLES ------> " << sweepTriangles << '\n';
-		std::cout << "lidTriangles --------->" << lidTriangles << '\n';
-		std::cout << "NUMBER OF TRIANGLES --> " << n_triangles << '\n';
+
 		data.vertexCount = hasLid ? n_p * (n_steps + 2) + 2 : n_p * n_steps;
 		data.vertices = new vec3f[data.vertexCount];
 		data.vertexNormals = new vec3f[data.vertexCount];
@@ -69,7 +64,7 @@ protected:
 
 		auto sweepTriangles = 2 * (n_p - 1) * (n_steps - 1);
 		auto triangle = data.triangles + sweepTriangles;
-		auto g3 = window->g3();
+		
 		for (long g = 0; g < 2; g++) 
 		{
 			long end = start + n_p;
@@ -99,12 +94,8 @@ protected:
 			generatrix = generatrixPointer[g];
 			for (long i = 0; i < n_p - 2 + np_offset; i++)
 			{
-				std::cout << "ADDING TRIANGLE NUMBER " << triangle - data.triangles << '\n';
 				auto index = generatrix++ - generatrixPointer[0];
 				triangle++->setVertices(index, index + 1, end);
-				g3->drawLine(data.vertices[index], data.vertices[index + 1]);
-				g3->drawLine(data.vertices[index], data.vertices[end]);
-				g3->drawLine(data.vertices[index + 1], data.vertices[end]);
 			}
 			
 			start = end + 1;

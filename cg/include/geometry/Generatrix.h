@@ -24,7 +24,7 @@ namespace cg
 			#ifdef _DEBUG
 			if (occupied == maxSize)
 			{
-				std::cout << "MANO CÊ FEZ DODOI, ALOCOU ESPACO INSUFICIENTE NA GERATRIZ\n";
+				//std::cout << "MANO CÊ FEZ DODOI, ALOCOU ESPACO INSUFICIENTE NA GERATRIZ\n";
 				return;
 			}
 			#endif // DEBUG

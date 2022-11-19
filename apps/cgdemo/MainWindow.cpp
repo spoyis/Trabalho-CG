@@ -89,6 +89,9 @@ MainWindow::createObjectMenu()
       createDefaultPrimitiveObject("Cylinder");
     if (ImGui::MenuItem("Cone"))
       createDefaultPrimitiveObject("Cone");
+    if (ImGui::MenuItem("Sweep")) {
+        createSweeperObject("Sweep");
+    }
     //if (ImGui::MenuItem("Plane"))
       //createDefaultPrimitiveObject("Plane");
     ImGui::EndMenu();
@@ -275,6 +278,7 @@ MainWindow::gui()
   ImGui::SetNextWindowPos({rgt, awy});
   ImGui::SetNextWindowSize({iww, awh});
   assetsWindow();
+
 }
 
 void

@@ -90,6 +90,25 @@ private:
 
   static void buildDefaultMeshes();
 
+  bool sweepMenuVisible{ false };
+  // spiral sweeper
+  float w_e = 1, s_x = 1, s_y = 1, r_e = 2;
+  long n_se = 40;
+  float delta_he = 5, delta_we = 2;
+  bool hasLid = false;
+  // generatrix
+  float angle = 260;
+  long points = 5;
+
+  // imgui
+  int selectedGeneratrix = 1;
+  int selectedSweepType = 0;
+
+  float l_v = 1, o_wv = 0, o_hv = 0;
+  long n_sv = 20;
+  float s_bv = 2, s_ev = 2, r_v = 0;
+  bool closed = true;
+
 }; // MainWindow
 
 #endif // __MainWindow_h

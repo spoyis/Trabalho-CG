@@ -82,6 +82,7 @@ protected:
     registerInspectFunction<CameraProxy>(inspectCamera);
     registerInspectFunction<LightProxy>(inspectLight);
     registerInspectFunction<TriangleMeshProxy>(inspectPrimitive);
+    registerInspectFunction<SweeperProxy>(inspectSweeper);
   }
 
   void setScene(Scene&);
@@ -108,6 +109,7 @@ protected:
   static void inspectCamera(SceneWindow&, CameraProxy&);
   static void inspectLight(SceneWindow&, LightProxy&);
   static void inspectPrimitive(SceneWindow&, TriangleMeshProxy&);
+  static void inspectSweeper(SceneWindow&, SweeperProxy&);
 
 private:
   using InspectMap = std::unordered_map<size_t, InspectFunction<>>;

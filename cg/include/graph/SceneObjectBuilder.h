@@ -60,6 +60,7 @@ public:
   SceneObject* createCameraObject(float aspect = 1, const char* = "");
   SceneObject* createLightObject(Light::Type, const char* = "");
   SceneObject* createPrimitiveObject(const TriangleMesh&, const std::string&);
+  SceneObject* createSweeperObject(const std::string&);
 
   SceneObject* createObject(const char* name, Component* component)
   {
@@ -84,6 +85,11 @@ protected:
   auto makePrimitive(const TriangleMesh& mesh, const std::string& meshName)
   {
     return TriangleMeshProxy::New(mesh, meshName);
+  }
+
+  auto makeSweeper(const std::string& meshName)
+  {
+      return SweeperProxy::New(meshName);
   }
 
 }; // SceneObjectBuilder

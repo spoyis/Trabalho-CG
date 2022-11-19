@@ -405,6 +405,69 @@ SceneWindow::inspectPrimitive(SceneWindow&, TriangleMeshProxy& proxy)
   inspectMaterial(*material);
   proxy.actor()->visible = proxy.sceneObject()->visible();
 }
+void
+SceneWindow::inspectSweeper(SceneWindow& window, SweeperProxy& proxy) {
+    //inspectPrimitive(window, proxy);
+
+    static const char* generatrixTypes[] = { "Poligon", "Arch" };
+    static const char* sweepTypes[] = { "Twist", "Spiral" };
+    ImGui::inputText("WTF", proxy.meshName());
+    auto primitive = proxy.mapper()->primitive();
+    auto material = primitive->material();
+
+    ImGui::inputText("Material", material->name());
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (auto* payload = ImGui::AcceptDragDropPayload("Material"))
+        {
+            auto mit = *(MaterialMapIterator*)payload->Data;
+
+            assert(mit->second != nullptr);
+            primitive->setMaterial(material = mit->second);
+        }
+        ImGui::EndDragDropTarget();
+    }
+    inspectMaterial(*material);
+    proxy.actor()->visible = proxy.sceneObject()->visible();
+    {
+        bool changed = false;
+        ImGui::Separator();
+        changed |= ImGui::Combo("Generatrix type", &proxy.selectedGeneratrix, generatrixTypes, IM_ARRAYSIZE(generatrixTypes));
+        if (proxy.selectedGeneratrix == 1)
+        {
+            changed |= ImGui::Checkbox("Closed arch", &proxy.closed);
+            changed |= ImGui::SliderFloat("angle", &proxy.angle, 1.0f, 360.0f);
+        }
+        changed |= ImGui::SliderInt("segments", (int*)&proxy.points, 2.0, 30);
+
+        ImGui::Separator();
+        changed |= ImGui::Combo("Sweep type", &proxy.selectedSweepType, sweepTypes, IM_ARRAYSIZE(sweepTypes));
+        changed |= ImGui::Checkbox("has lid", &proxy.hasLid);
+        if (proxy.selectedSweepType == 1) {
+
+            changed |= ImGui::SliderFloat("Initial length", &proxy.w_e, 2.0f, 100.0f);
+            changed |= ImGui::SliderFloat("x scale", &proxy.s_x, 0.2f, 10.0f);
+            changed |= ImGui::SliderFloat("y scale", &proxy.s_y, 0.2f, 10.0f);
+            changed |= ImGui::SliderFloat("rotations", &proxy.r_e, 0.5f, 20.0f);
+            changed |= ImGui::SliderInt("segments per rotation", (int*)&proxy.n_se, 3, 40);
+            changed |= ImGui::SliderFloat("height variation", &proxy.delta_he, 0.0f, 10.0f);
+            changed |= ImGui::SliderFloat("length variation", &proxy.delta_we, 0.0f, 10.0f);
+        }
+        else {
+            changed |= ImGui::SliderFloat("Length", &proxy.l_v, 1.0f, 50.0f);
+            changed |= ImGui::SliderFloat("Horizontal shift", &proxy.o_wv, -5.0f, 5.0f);
+            changed |= ImGui::SliderFloat("Vertival shift", &proxy.o_hv, -5.0f, 5.0f);
+            changed |= ImGui::SliderFloat("Initial scale", &proxy.s_bv, 0.1f, 5.0f);
+            changed |= ImGui::SliderFloat("Final scale", &proxy.s_ev, 0.1f, 5.0f);
+            changed |= ImGui::SliderFloat("Twist", &proxy.r_v, -2.0f, 2.0f);
+            changed |= ImGui::SliderInt("segments per rotation", (int*)&proxy.n_sv, 1, 50);
+        }
+        if (changed) {
+            proxy.renewMesh();
+        }
+    }
+    
+}
 
 Component*
 SceneWindow::addComponentMenu()

@@ -146,9 +146,7 @@ public:
         return _meshName.c_str();
     }
 
-    void renewMesh()
-    {
-
+    TriangleMesh* getMesh() {
         Generatrix* g;
         ArchGeneratrix garch = ArchGeneratrix(points, angle, closed);
         PolygonGeneratrix gpoly = PolygonGeneratrix(points);
@@ -157,7 +155,7 @@ public:
 
         TriangleMesh* mesh;
 
-        SpiralSweeper* spiralSweep; 
+        SpiralSweeper* spiralSweep;
         TwistSweeper* twistsweep;
         if (selectedSweepType)
         {
@@ -170,6 +168,12 @@ public:
             mesh = twistsweep->get();
         }
 
+        return mesh;
+    }
+
+    void renewMesh()
+    {
+        TriangleMesh* mesh = getMesh();
         ((TriangleMeshMapper*)PrimitiveProxy::mapper())->setMesh(*mesh);
     }
 

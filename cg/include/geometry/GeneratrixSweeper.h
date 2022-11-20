@@ -51,8 +51,6 @@ protected:
 				triangle++->setVertices(k, j, j + 1);
 			}
 		}
-
-
 	}
 
 	void buildLid(TriangleMesh::Data& data, Matrix<float, 4, 4> R, long n_p, long n_steps, bool np_offset) {
@@ -149,7 +147,7 @@ public:
 			vec3f T = { d_e + totalDelta_we/n_re * k, totalDelta_he/n_re * k ,0.0F };
 
 			constexpr auto pi = math::pi<float>();
-			auto angle = ((pi * theta_e/n_re * k/ 2) / 180.0F) ;
+			auto angle = ((pi * theta_e/n_re * k/ 2) / 180.0F);
 			Quaternion<float> R = { 0,sin(angle),0, cos(angle)};
 
 			auto trs = Matrix<float,4,4>::TRS({0,0,0}, R, S);
@@ -164,7 +162,7 @@ public:
 
 		// Rotação completa da varredura
 		Quaternion<float> R = { 0,sin(toRadian(theta_e / 2)),0, cos(toRadian(theta_e / 2)) };
-		auto trs = Matrix<float, 4, 4>::TRS({ 0,0,0 }, R, { 1,1,1 });
+		auto trs = Matrix<float, 4, 4>::TRS({ 0,0,0 }, R, { -1,-1,-1 });
 
 		buildTriangles(data, n_steps, n_p);
 		if (hasLid) buildLid(data, trs, n_p, n_steps, generatrix.getAngle() == 360.0F);
@@ -219,7 +217,7 @@ public:
 		}
 
 		Quaternion<float> R = { 0,0,sin(toRadian(theta_v / 2)), cos(toRadian(theta_v / 2)) };
-		auto trs = Matrix<float, 4, 4>::TRS({ 0,0,0 }, R, { 1,1,1 });
+		auto trs = Matrix<float, 4, 4>::TRS({ 0,0,0 }, R, { -1,-1,-1 });
 
 		buildTriangles(data, n_steps, n_p);
 		if (hasLid) buildLid(data, trs, n_p, n_steps, generatrix.getAngle() == 360.0F);

@@ -32,6 +32,7 @@
 
 #include "graph/SceneWindow.h"
 #include "graphics/Assets.h"
+#include "utils/MeshWriter.h"
 #include <cassert>
 
 namespace cg
@@ -411,7 +412,7 @@ SceneWindow::inspectSweeper(SceneWindow& window, SweeperProxy& proxy) {
 
     static const char* generatrixTypes[] = { "Poligon", "Arch" };
     static const char* sweepTypes[] = { "Twist", "Spiral" };
-    ImGui::inputText("WTF", proxy.meshName());
+    
     auto primitive = proxy.mapper()->primitive();
     auto material = primitive->material();
 
@@ -464,6 +465,18 @@ SceneWindow::inspectSweeper(SceneWindow& window, SweeperProxy& proxy) {
         }
         if (changed) {
             proxy.renewMesh();
+        }
+        bool buttonPress = false;
+        static char textBoxStr[50] = "teste";
+        buttonPress = ImGui::Button("Save mesh");
+        ImGui::SameLine();
+        ImGui::InputText("mesh name", textBoxStr, IM_ARRAYSIZE(textBoxStr));
+   
+        if(buttonPress) {
+            std::string name(textBoxStr);
+            TriangleMesh* mesh = proxy.getMesh();
+            MeshWriter meshWriter(mesh->data());
+            meshWriter.writeMesh(name);
         }
     }
     

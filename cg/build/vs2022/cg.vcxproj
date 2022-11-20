@@ -195,6 +195,7 @@
     <ClInclude Include="..\..\include\math\Vector3.h" />
     <ClInclude Include="..\..\include\math\Vector4.h" />
     <ClInclude Include="..\..\include\utils\MeshReader.h" />
+    <ClInclude Include="..\..\include\utils\MeshWriter.h" />
     <ClInclude Include="..\..\include\utils\Stopwatch.h" />
   </ItemGroup>
   <ItemGroup>

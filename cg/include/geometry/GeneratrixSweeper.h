@@ -1,5 +1,6 @@
 #pragma once
 #include "geometry/Generatrix.h"
+#include "iostream"
 #include "math/Matrix4x4.h"
 
 namespace cg
@@ -22,7 +23,7 @@ protected:
 
 	void initMeshData(TriangleMesh::Data& data, Generatrix& generatrix, long n_p, long n_steps, bool hasLid) {
 		// TODO
-		const auto lidTriangles = (generatrix.getAngle() == 360.0F) ? (n_p - 1) * 2 : (n_p - 2) * 2;
+		const auto lidTriangles = generatrix.size() * 2;
 		// triangles resulting from sweeping
 		const auto sweepTriangles = 2 * (n_p - 1) * (n_steps - 1);
 
@@ -53,7 +54,7 @@ protected:
 		}
 	}
 
-	void buildLid(TriangleMesh::Data& data, Matrix<float, 4, 4> R, long n_p, long n_steps, bool np_offset) {
+	void buildLid(TriangleMesh::Data& data, Matrix<float, 4, 4> R, long n_p, long n_steps, long generatrixSize) {
 
 		const long lastVertex = n_p * n_steps;
 		vec3f* generatrixPointer[2] = { &data.vertices[0], &data.vertices[lastVertex - n_p] };
@@ -90,10 +91,12 @@ protected:
 				minZ + (maxZ - minZ)/2};  // z --> menor ponto em z + wrapping box em z/2
 
 			generatrix = generatrixPointer[g];
-			for (long i = 0; i < n_p - 2 + np_offset; i++)
+			for (long i = 0; i < generatrixSize; i++)
 			{
 				auto index = generatrix++ - generatrixPointer[0];
-				triangle++->setVertices(index, index + 1, end);
+				if (i != generatrixSize - 1)
+					triangle++->setVertices(index, index + 1, end);
+				else triangle++->setVertices(index, generatrixPointer[g] - generatrixPointer[0], end);
 			}
 			
 			start = end + 1;
@@ -165,7 +168,7 @@ public:
 		auto trs = Matrix<float, 4, 4>::TRS({ 0,0,0 }, R, { -1,-1,-1 });
 
 		buildTriangles(data, n_steps, n_p);
-		if (hasLid) buildLid(data, trs, n_p, n_steps, generatrix.getAngle() == 360.0F);
+		if (hasLid) buildLid(data, trs, n_p, n_steps, generatrix.size());
 		mesh = new TriangleMesh{ std::move(data) };
 	}
 }; // end class SpiralSweeper
@@ -220,7 +223,7 @@ public:
 		auto trs = Matrix<float, 4, 4>::TRS({ 0,0,0 }, R, { -1,-1,-1 });
 
 		buildTriangles(data, n_steps, n_p);
-		if (hasLid) buildLid(data, trs, n_p, n_steps, generatrix.getAngle() == 360.0F);
+		if (hasLid) buildLid(data, trs, n_p, n_steps, generatrix.size());
 		mesh = new TriangleMesh{ std::move(data) };
 	}
 }; // end class TwistSweeper

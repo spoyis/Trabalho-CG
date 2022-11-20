@@ -50,7 +50,7 @@ namespace cg
 		}
 
 		while (triangleCount--) {
-			out << "f " << triangles->v[0] << " " << triangles->v[1] << " " << triangles->v[2] << std::endl;
+			out << "f " << triangles->v[0] + 1 << " " << triangles->v[1] + 1 << " " << triangles->v[2] + 1 << std::endl;
 			triangles++;
 		}
 

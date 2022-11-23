@@ -108,15 +108,7 @@ SceneObjectBuilder::createPrimitiveObject(const TriangleMesh& mesh,
   return object;
 }
 
-SceneObject*
-SceneObjectBuilder::createSweeperObject(const std::string& meshName)
-{
-    auto object = SceneObject::New(*_scene);
 
-    object->setName("%s %d", meshName.c_str(), ++_primitiveId);
-    object->addComponent(makeSweeper(meshName));
-    return object;
-}
 
 Material*
 SceneObjectBuilder::createMaterial()

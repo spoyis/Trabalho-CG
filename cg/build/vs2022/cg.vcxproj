@@ -111,8 +111,6 @@
     <ClInclude Include="..\..\include\geometry\Bounds2.h" />
     <ClInclude Include="..\..\include\geometry\Bounds3.h" />
     <ClInclude Include="..\..\include\geometry\BVH.h" />
-    <ClInclude Include="..\..\include\geometry\Generatrix.h" />
-    <ClInclude Include="..\..\include\geometry\GeneratrixSweeper.h" />
     <ClInclude Include="..\..\include\geometry\Grid2.h" />
     <ClInclude Include="..\..\include\geometry\Grid3.h" />
     <ClInclude Include="..\..\include\geometry\GridBase.h" />
@@ -195,7 +193,6 @@
     <ClInclude Include="..\..\include\math\Vector3.h" />
     <ClInclude Include="..\..\include\math\Vector4.h" />
     <ClInclude Include="..\..\include\utils\MeshReader.h" />
-    <ClInclude Include="..\..\include\utils\MeshWriter.h" />
     <ClInclude Include="..\..\include\utils\Stopwatch.h" />
   </ItemGroup>
   <ItemGroup>

@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\Main.cpp" />
     <ClCompile Include="..\..\MainWindow.cpp" />
+    <ClCompile Include="..\..\MySceneWindow.cpp" />
     <ClCompile Include="..\..\RayTracer.cpp" />
     <ClCompile Include="..\..\reader\AbstractParser.cpp" />
     <ClCompile Include="..\..\reader\Buffer.cpp" />
@@ -24,7 +25,11 @@
     <ClCompile Include="..\..\reader\Scope.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Generatrix.h" />
+    <ClInclude Include="..\..\GeneratrixSweeper.h" />
     <ClInclude Include="..\..\MainWindow.h" />
+    <ClInclude Include="..\..\MeshWriter.h" />
+    <ClInclude Include="..\..\MySceneWindow.h" />
     <ClInclude Include="..\..\RayTracer.h" />
     <ClInclude Include="..\..\reader\AbstractParser.h" />
     <ClInclude Include="..\..\reader\Buffer.h" />
@@ -35,6 +40,9 @@
     <ClInclude Include="..\..\reader\SceneReader.h" />
     <ClInclude Include="..\..\reader\Scope.h" />
     <ClInclude Include="..\..\reader\StringRef.h" />
+    <ClInclude Include="..\..\SpiralSweeper.h" />
+    <ClInclude Include="..\..\SweeperProxy.h" />
+    <ClInclude Include="..\..\TwistSweeper.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

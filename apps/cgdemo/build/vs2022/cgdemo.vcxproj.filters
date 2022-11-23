@@ -50,6 +50,9 @@
     <ClCompile Include="..\..\reader\Scope.cpp">
       <Filter>Source Files\reader</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\MySceneWindow.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\MainWindow.h">
@@ -84,6 +87,27 @@
     </ClInclude>
     <ClInclude Include="..\..\reader\Scope.h">
       <Filter>Header Files\reader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Generatrix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\GeneratrixSweeper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\TwistSweeper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\SpiralSweeper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\MeshWriter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\SweeperProxy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\MySceneWindow.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

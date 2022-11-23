@@ -130,7 +130,7 @@ MainWindow::readScene(const std::string& filename)
     reader.setInput(filename);
     reader.execute();
     if (reader.scene() != nullptr)
-      SceneWindow::setScene(*reader.scene());
+      MySceneWindow::setScene(*reader.scene());
   }
   catch (const std::exception& e)
   {

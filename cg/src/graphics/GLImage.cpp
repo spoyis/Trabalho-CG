@@ -221,10 +221,6 @@ GLImage::draw(int x, int y) const
   drawer()->draw(*this, x, y);
 }
 
-void
-GLImage::draw(uint32_t texture, int x, int y, int width, int height)
-{
-  drawer()->draw(texture, x, y, width, height);
-}
+
 
 } // end namespace cg

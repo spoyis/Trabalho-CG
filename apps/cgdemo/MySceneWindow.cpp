@@ -94,12 +94,13 @@ namespace cg
                 ImGui::Separator();
                 changed |= ImGui::Combo("Sweep type", &proxy.selectedSweepType, sweepTypes, IM_ARRAYSIZE(sweepTypes));
                 changed |= ImGui::Checkbox("has lid", &proxy.hasLid);
+                changed |= ImGui::Checkbox("use computeNormals", &proxy.useComputeNormals);
                 if (proxy.selectedSweepType == 1) {
 
                     changed |= ImGui::SliderFloat("Initial length", &proxy.w_e, 2.0f, 100.0f);
                     changed |= ImGui::SliderFloat("x scale", &proxy.s_x, 0.2f, 10.0f);
                     changed |= ImGui::SliderFloat("y scale", &proxy.s_y, 0.2f, 10.0f);
-                    changed |= ImGui::SliderFloat("rotations", &proxy.r_e, 0.5f, 20.0f);
+                    changed |= ImGui::SliderFloat("rotations", &proxy.r_e, 0.1f, 20.0f);
                     changed |= ImGui::SliderInt("segments per rotation", (int*)&proxy.n_se, 3, 40);
                     changed |= ImGui::SliderFloat("height variation", &proxy.delta_he, 0.0f, 10.0f);
                     changed |= ImGui::SliderFloat("length variation", &proxy.delta_we, 0.0f, 10.0f);

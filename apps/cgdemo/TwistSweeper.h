@@ -8,7 +8,7 @@ class TwistSweeper : public GeneratrixSweeper
 { // begin class TwistSweeper
 public:
 	TwistSweeper(Generatrix& generatrix, float l_v,
-		float o_wv, float o_hv, long n_sv, float s_bv, float s_ev, float r_v, bool hasLid)
+		float o_wv, float o_hv, long n_sv, float s_bv, float s_ev, float r_v, bool hasLid, bool useComputeNormals)
 	{
 		Generatrix::WrappingBox wrappingBox = generatrix.getWrappingBox();
 		wrappingBox.b_x *= s_bv;
@@ -55,6 +55,7 @@ public:
 		buildTriangles(data, n_steps, n_p);
 		if (hasLid) buildLid(data, trs, n_p, n_steps, generatrix.size());
 		mesh = new TriangleMesh{ std::move(data) };
+		if(useComputeNormals)mesh->computeNormals();
 	}
 }; // end class TwistSweeper
 } // end namespace cg

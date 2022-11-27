@@ -7,7 +7,7 @@ namespace cg
 	public:
 		SpiralSweeper(Generatrix& generatrix, float w_e, float s_x,
 			float s_y, float r_e, long n_se,
-			float delta_he, float delta_we, bool hasLid)
+			float delta_he, float delta_we, bool hasLid, bool useComputeNormals)
 		{
 			Generatrix::WrappingBox wrappingBox = generatrix.getWrappingBox();
 			wrappingBox.b_x *= s_x;
@@ -59,7 +59,9 @@ namespace cg
 
 			buildTriangles(data, n_steps, n_p);
 			if (hasLid) buildLid(data, trs, n_p, n_steps, generatrix.size());
+
 			mesh = new TriangleMesh{ std::move(data) };
+			if (useComputeNormals)mesh->computeNormals();
 		}
 	}; // end class SpiralSweeper
 } // end namespace cg

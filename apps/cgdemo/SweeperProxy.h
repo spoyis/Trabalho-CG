@@ -16,7 +16,7 @@ public:
     static auto New(const std::string& meshName)
     {
         ArchGeneratrix garch = ArchGeneratrix(5, 260, true);
-        SpiralSweeper* spiralSweep = new SpiralSweeper(garch, 1, 1, 1, 2, 40, 5, 2, false);
+        SpiralSweeper* spiralSweep = new SpiralSweeper(garch, 1, 1, 1, 2, 40, 5, 2, false, false);
 
         return new SweeperProxy{ *spiralSweep->get(), meshName };
     }
@@ -39,12 +39,12 @@ public:
         TwistSweeper* twistsweep;
         if (selectedSweepType)
         {
-            spiralSweep = new SpiralSweeper(*g, w_e, s_x, s_y, r_e, n_se, delta_he, delta_we, hasLid);
+            spiralSweep = new SpiralSweeper(*g, w_e, s_x, s_y, r_e, n_se, delta_he, delta_we, hasLid, useComputeNormals);
             mesh = spiralSweep->get();
         }
         else
         {
-            twistsweep = new TwistSweeper(*g, l_v, o_wv, o_hv, n_sv, s_bv, s_ev, r_v, hasLid);
+            twistsweep = new TwistSweeper(*g, l_v, o_wv, o_hv, n_sv, s_bv, s_ev, r_v, hasLid, useComputeNormals);
             mesh = twistsweep->get();
         }
 
@@ -61,6 +61,7 @@ public:
     long n_se = 40;
     float delta_he = 5, delta_we = 2;
     bool hasLid = false;
+    bool useComputeNormals = false;
     // generatrix
     float angle = 260;
     long points = 5;

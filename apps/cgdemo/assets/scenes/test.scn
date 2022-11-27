@@ -10,7 +10,7 @@ scene
 
   object "Main Camera"
   {
-    define pos <-5, 5, 15>
+    define pos <-3.2, 2.8, 20> 
 	  define vpn pos - <4, 0, 5>
 
     transform
@@ -1548,7 +1548,7 @@ scene
         position <-2,-2,3>
         scale radius
       }
-      sphere material "Material1"
+      mesh "teste.obj" material "Material1"
     }
 
     object
@@ -1558,7 +1558,7 @@ scene
         position <-2,-2,4>
         scale radius
       }
-      sphere material "Material12"
+      mesh "teste.obj" material "Material12"
     }
 
     object
@@ -1568,7 +1568,7 @@ scene
         position <-2,-2,5>
         scale radius
       }
-      sphere material "Material8"
+      mesh "teste.obj" material "Material8"
     }
 
     object
@@ -1578,7 +1578,7 @@ scene
         position <-2,-2,6>
         scale radius
       }
-      sphere material "Material4"
+      mesh "teste.obj" material "Material4"
     }
 
     object
@@ -1588,7 +1588,7 @@ scene
         position <-2,-2,7>
         scale radius
       }
-      sphere material "Material15"
+      mesh "teste.obj" material "Material15"
     }
 
     object
@@ -6994,50 +6994,51 @@ scene
     {
       transform
       {
-        position <12,-2,7>
+        position <12,2,7>
         scale radius
       }
-      sphere material "Material5"
+      mesh "arch_168_twist.obj" material "Material5"
     }
 
     object
     {
       transform
       {
-        position <12,-2,8>
+        position <6,5,8>
         scale radius
       }
-      sphere material "Material1"
+      mesh "arch_168_twist.obj" material "Material1"
     }
 
     object
     {
       transform
       {
-        position <12,-2,9>
+        position <17,-10,-11>
         scale radius
       }
-      sphere material "Material12"
+      mesh "arch_230_spiral_large.obj" material "Material13"
     }
 
     object
     {
       transform
       {
-        position <12,-2,10>
+        position <7,-2,10>
         scale radius
+        rotation axes(<-3.2, 2.8, 20> - <4, -90, 5>, <-0.2,0.5,0.5>)
       }
-      sphere material "Material8"
+      mesh "pp.obj" material "Material13"
     }
 
     object
     {
       transform
       {
-        position <12,-2,11>
-        scale radius
+        position <6.4,2,11>
+        scale vec3(0.1)
       }
-      sphere material "Material4"
+      mesh "poligon_3_spiral.obj" material "Material12"
     }
 
     object
@@ -7054,10 +7055,11 @@ scene
     {
       transform
       {
-        position <12,-2,13>
+        position <14,-1,9>
         scale radius
+        rotation axes(<-3.2, 2.8, 20> - <24, 0, 5>, <0,1,0>)
       }
-      sphere material "Material11"
+      mesh "arch_200_twist.obj" material "Material7"
     }
 
     object

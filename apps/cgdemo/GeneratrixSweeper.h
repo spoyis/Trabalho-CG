@@ -13,6 +13,12 @@ namespace cg
 		auto get() { return mesh; }
 	protected:
 		TriangleMesh* mesh;
+
+		/* AUXILIARY METHODS FOR SWEEPING 
+		
+		   THESE METHODS ARE USED IN BOTH SWEEP TYPES
+		   SO WE IMPLEMENT THEM IN THE PARENT CLASS.
+		*/
 		template<typename T>
 		void boundaryCheck(T& data, T lo, T hi) {
 			if (data < lo) data = lo;
@@ -20,11 +26,11 @@ namespace cg
 		}
 
 		void initMeshData(TriangleMesh::Data& data, Generatrix& generatrix, long n_p, long n_steps, bool hasLid) {
-			// TODO
+			// triangles belonging to the lid
 			const auto lidTriangles = generatrix.size() * 2;
 			// triangles resulting from sweeping
 			const auto sweepTriangles = 2 * (n_p - 1) * (n_steps - 1);
-
+			// total number of triangles
 			const auto n_triangles = hasLid ? lidTriangles + sweepTriangles : sweepTriangles;
 
 			data.vertexCount = hasLid ? n_p * (n_steps + 2) + 2 : n_p * n_steps;
@@ -52,6 +58,7 @@ namespace cg
 			}
 		}
 
+		// Creates lid vertices AND triangles
 		void buildLid(TriangleMesh::Data& data, Matrix<float, 4, 4> R, long n_p, long n_steps, long generatrixSize) {
 
 			const long lastVertex = n_p * n_steps;

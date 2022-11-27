@@ -58,6 +58,8 @@ namespace cg
             return scene;
         }
 
+        // INSPECT SWEEPER METHOD
+        // THIS IS THE GUI ELEMENT PERTAINING TO A SWEEPERPROXY
         void MySceneWindow::inspectSweeper(MySceneWindow&, SweeperProxy& proxy)
         {
             static const char* generatrixTypes[] = { "Poligon", "Arch" };

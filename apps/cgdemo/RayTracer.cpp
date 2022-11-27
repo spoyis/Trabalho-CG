@@ -174,6 +174,8 @@ void
 RayTracer::scan(Image& image, float maxDepth)
 {
   ImageBuffer scanLine{_viewport.w, 1};
+  // shoot values are cached in the shoot method.
+  // every time you scan the scene, clear the rayMap
   _rayMap.clear();
 
   if (maxDepth == 0) {
@@ -213,7 +215,7 @@ RayTracer::supersampling(float minX, float maxX, float minY, float maxY, int dep
     // 
     //
 
-    auto color1 = shoot(minX, minY);
+    auto color1 = shoot(minX, minY); 
     auto color2 = shoot(minX, maxY);
     auto color3 = shoot(maxX, minY);
     auto color4 = shoot(maxX, maxY);

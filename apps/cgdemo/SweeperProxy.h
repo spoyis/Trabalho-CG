@@ -26,12 +26,12 @@ public:
         return _meshName.c_str();
     }
 
+    // creates triangle mesh
     TriangleMesh* getMesh() {
         Generatrix* g;
         ArchGeneratrix garch = ArchGeneratrix(points, angle, closed);
         PolygonGeneratrix gpoly = PolygonGeneratrix(points);
         if (selectedGeneratrix) g = &garch; else g = &gpoly;
-        //g3->drawGeneratrix(*g);
 
         TriangleMesh* mesh;
 
@@ -51,12 +51,14 @@ public:
         return mesh;
     }
 
+    // called every time the user changes one of the variables on the gui
     void renewMesh()
     {
         TriangleMesh* mesh = getMesh();
         ((TriangleMeshMapper*)PrimitiveProxy::mapper())->setMesh(*mesh);
     }
 
+    // variables pertaining to each generatrix type and sweeper.
     float w_e = 1, s_x = 1, s_y = 1, r_e = 2;
     long n_se = 40;
     float delta_he = 5, delta_we = 2;

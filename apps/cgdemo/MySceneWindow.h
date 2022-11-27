@@ -8,6 +8,7 @@
 
 namespace cg::graph
 {
+    // extends sceneobjectbuilder class with methods to create sweeperproxies
     class MySceneObjectBuilder : public SceneObjectBuilder
     {
     public:
@@ -35,12 +36,21 @@ namespace cg::graph
             registerInspectFunction<CameraProxy>(inspectCamera);
             registerInspectFunction<LightProxy>(inspectLight);
             registerInspectFunction<TriangleMeshProxy>(inspectPrimitive);
-            registerInspectFunction<SweeperProxy>(inspectSweeper);
+            registerInspectFunction<SweeperProxy>(inspectSweeper);  // <------ couples sweeperproxy to inspectsweeper method
         }
 
+        // inspectsweeper method
         static void inspectSweeper(MySceneWindow&, SweeperProxy& proxy);
 
 
+
+
+
+
+
+
+        // the rest of the class are just copied/pasted from scenewindowbase
+        // we found this approach to be easier.
         template <typename C>
         void registerInspectFunction(InspectFunction<C> function)
         {

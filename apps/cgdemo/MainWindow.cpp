@@ -183,6 +183,8 @@ MainWindow::showOptions()
   ImGui::PopItemWidth();
 }
 
+
+
 inline void
 MainWindow::mainMenu()
 {
@@ -226,7 +228,10 @@ MainWindow::mainMenu()
         0.01f,
         RayTracer::minMinWeight,
         1.0f);
+
+      ImGui::SliderInt("Max Surpesampling Depth", &_maxDepth, 0, 4);
       ImGui::EndMenu();
+      
     }
     if (ImGui::BeginMenu("Tools"))
     {
@@ -300,7 +305,7 @@ MainWindow::renderScene()
       _rayTracer->setCamera(*camera);
     _rayTracer->setMaxRecursionLevel(_maxRecursionLevel);
     _rayTracer->setMinWeight(_minWeight);
-    _rayTracer->renderImage(*_image);
+    _rayTracer->renderImage(*_image, _maxDepth);
   }
   _image->draw(0, 0);
 }

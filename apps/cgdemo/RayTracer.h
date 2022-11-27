@@ -37,6 +37,7 @@
 #include "graphics/Image.h"
 #include "graphics/PrimitiveBVH.h"
 #include "graphics/Renderer.h"
+#include <map>
 
 namespace cg
 { // begin namespace cg
@@ -76,7 +77,7 @@ public:
 
   void update() override;
   void render() override;
-  virtual void renderImage(Image&);
+  virtual void renderImage(Image&, float maxDepth);
 
 private:
   Reference<PrimitiveBVH> _bvh;
@@ -96,8 +97,11 @@ private:
   float _Vw;
   float _Ih;
   float _Iw;
+  float _epsilon{ 0.2 };
 
-  void scan(Image& image);
+  std::map<std::pair<float, float>, Color> _rayMap;
+
+  void scan(Image& image, float maxDepth);
   void setPixelRay(float x, float y);
   Color shoot(float x, float y);
   bool intersect(const Ray3f&, Intersection&);
@@ -105,7 +109,7 @@ private:
   Color shade(const Ray3f&, Intersection&, uint32_t, float);
   bool shadow(const Ray3f&);
   Color background() const;
-
+  Color supersampling(float minX, float maxX, float minY, float maxY, int depth, int maxDepth);
   vec3f imageToWindow(float x, float y) const
   {
     return _Vw * (x * _Iw - 0.5f) * _vrc.u + _Vh * (y * _Ih - 0.5f) * _vrc.v;

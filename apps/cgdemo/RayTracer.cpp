@@ -95,7 +95,7 @@ RayTracer::render()
 }
 
 void
-RayTracer::renderImage(Image& image)
+RayTracer::renderImage(Image& image, float maxDepth)
 {
   Stopwatch timer;
 
@@ -139,7 +139,7 @@ RayTracer::renderImage(Image& image)
   _pixelRay.tMax = B;
   _pixelRay.set(_camera->position(), -_vrc.n);
   _numberOfRays = _numberOfHits = 0;
-  scan(image);
+  scan(image, maxDepth);
 
   auto et = timer.time();
 
@@ -171,19 +171,73 @@ RayTracer::setPixelRay(float x, float y)
 }
 
 void
-RayTracer::scan(Image& image)
+RayTracer::scan(Image& image, float maxDepth)
 {
   ImageBuffer scanLine{_viewport.w, 1};
+  _rayMap.clear();
 
-  for (auto j = 0; j < _viewport.h; j++)
-  {
-    auto y = (float)j + 0.5f;
+  if (maxDepth == 0) {
+      for (auto j = 0; j < _viewport.h; j++)
+      {
+          auto y = (float)j + 0.5f;
 
-    printf("Scanning line %d of %d\r", j + 1, _viewport.h);
-    for (auto i = 0; i < _viewport.w; i++)
-      scanLine[i] = shoot((float)i + 0.5f, y);
-    image.setData(0, j, scanLine);
+          printf("Scanning line %d of %d\r", j + 1, _viewport.h);
+          for (auto i = 0; i < _viewport.w; i++)
+              scanLine[i] = shoot((float)i + 0.5f, y); 
+          image.setData(0, j, scanLine);       }
   }
+  else
+  {
+
+      for (auto j = 0; j < _viewport.h; j++)
+      {
+          auto y = (float)j + 0.5f;
+
+          printf("Scanning line %d of %d\r", j + 1, _viewport.h);
+          for (auto i = 0; i < _viewport.w; i++)
+              scanLine[i] = supersampling((float)i, (float)(i + 1), (float)j, (float)(j+1), 0, maxDepth);  // <---- supersampling
+          image.setData(0, j, scanLine);
+      }
+  }
+
+}
+Color
+RayTracer::supersampling(float minX, float maxX, float minY, float maxY, int depth, int maxDepth) 
+{
+    //  COR1*--------------*COR3             
+    //      |              |
+    //      |              |
+    //      |              |
+    //      |              |
+    //  COR2*--------------*COR4               
+    // 
+    //
+
+    auto color1 = shoot(minX, minY);
+    auto color2 = shoot(minX, maxY);
+    auto color3 = shoot(maxX, minY);
+    auto color4 = shoot(maxX, maxY);
+
+    auto meanColor = (color1 * 0.25) + (color2 * 0.25) + (color3 * 0.25) + (color4 * 0.25);
+
+    if (depth == maxDepth) return meanColor;
+    
+    auto medX = minX + (maxX - minX) / 2;
+    auto medY = minY + (maxY - minY) / 2;
+
+    Color* color[4]; color[0] = &color1; color[1] = &color2;  color[2] = &color3; color[3] = &color4;
+    for (long i = 0; i < 4; i++) {
+        if (meanColor == *color[i]) continue;
+        
+        auto newMinX = i < 2 ? minX : medX;
+        auto newMinY = i % 2 == 0 ? minY : medY;
+        auto newMaxX = i < 2 ? medX : maxX;
+        auto newMaxY = i % 2 == 0 ? medY : maxY;
+        *color[i] = supersampling(newMinX, newMinX, newMinY, newMaxY, depth + 1,  maxDepth);
+    }   
+
+    meanColor = (color1 * 0.25) + (color2 * 0.25) + (color3 * 0.25) + (color4 * 0.25);
+    return meanColor;
 }
 
 Color
@@ -195,7 +249,15 @@ RayTracer::shoot(float x, float y)
 //|  @return RGB color of the pixel                     |
 //[]---------------------------------------------------[]
 {
+    // verifica se ta no mapa
+    // se tiver retorna
+    // se não tiver, continua, traça o raio
+    // salva no mapa e retorna.
   // set pixel ray
+  auto search = _rayMap.find(std::make_pair(x, y));
+  if (search != _rayMap.end())
+      return search->second;
+
   setPixelRay(x, y);
 
   // trace pixel ray
@@ -208,6 +270,8 @@ RayTracer::shoot(float x, float y)
     color.g = 1.0f;
   if (color.b > 1.0f)
     color.b = 1.0f;
+
+  _rayMap[{x, y}] = color;
   // return pixel color
   return color;
 }

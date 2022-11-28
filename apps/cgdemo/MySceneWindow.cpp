@@ -92,6 +92,7 @@ namespace cg
                     changed |= ImGui::SliderFloat("angle", &proxy.angle, 1.0f, 360.0f);
                 }
                 changed |= ImGui::SliderInt("segments", (int*)&proxy.points, 2.0, 30);
+                changed |= ImGui::SliderFloat("theta", &proxy.generatrixTheta, 0, 360);
 
                 ImGui::Separator();
                 changed |= ImGui::Combo("Sweep type", &proxy.selectedSweepType, sweepTypes, IM_ARRAYSIZE(sweepTypes));

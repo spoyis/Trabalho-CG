@@ -15,7 +15,7 @@ class SweeperProxy final : public PrimitiveProxy
 public:
     static auto New(const std::string& meshName)
     {
-        ArchGeneratrix garch = ArchGeneratrix(5, 260, true);
+        ArchGeneratrix garch = ArchGeneratrix(5, 260, true, 0);
         SpiralSweeper* spiralSweep = new SpiralSweeper(garch, 1, 1, 1, 2, 40, 5, 2, false, false);
 
         return new SweeperProxy{ *spiralSweep->get(), meshName };
@@ -29,8 +29,8 @@ public:
     // creates triangle mesh
     TriangleMesh* getMesh() {
         Generatrix* g;
-        ArchGeneratrix garch = ArchGeneratrix(points, angle, closed);
-        PolygonGeneratrix gpoly = PolygonGeneratrix(points);
+        ArchGeneratrix garch = ArchGeneratrix(points, angle, closed, generatrixTheta);
+        PolygonGeneratrix gpoly = PolygonGeneratrix(points, generatrixTheta);
         if (selectedGeneratrix) g = &garch; else g = &gpoly;
 
         TriangleMesh* mesh;
@@ -67,6 +67,7 @@ public:
     // generatrix
     float angle = 260;
     long points = 5;
+    float generatrixTheta;
 
     // imgui
     int selectedGeneratrix = 1;

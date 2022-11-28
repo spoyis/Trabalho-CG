@@ -73,13 +73,15 @@ namespace cg
 
 	class PolygonGeneratrix : public Generatrix {
 	public:
-		PolygonGeneratrix(long dim) : Generatrix(dim > 2 ? dim : 3) {
+		PolygonGeneratrix(long dim, float theta) : Generatrix(dim > 2 ? dim : 3) {
 			if (dim <= 2) dim = 3;
+			constexpr auto pi = math::pi<float>();
+			theta = pi * theta / 180;
 
-			float x = 0, y = 1;
+			float x = - sin(theta), y = cos(theta);
+
 			add(x, y, 0);
 			{
-				constexpr auto pi = math::pi<float>();
 				auto angleStep = pi / dim * 2;
 				auto cosStep = cos(angleStep);
 				auto sinStep = sin(angleStep);
@@ -103,7 +105,7 @@ namespace cg
 
 	class ArchGeneratrix : public Generatrix {
 	public:
-		ArchGeneratrix(long segments, float angle, bool closed) : Generatrix(angle == 360 ? segments : segments + 1) {
+		ArchGeneratrix(long segments, float angle, bool closed, float theta) : Generatrix(angle == 360 ? segments : segments + 1) {
 			if (angle < 0) angle = 1.0F;
 			if (angle > 360) angle = 360.0F;
 			setAngle(angle);
@@ -111,13 +113,14 @@ namespace cg
 
 			constexpr auto pi = math::pi<float>();
 			angle = (pi * angle) / 180.0F;
+			theta = pi * theta / 180.0F;
 
 			auto angleStep = angle / segments;
-			auto cosStep = cos(angleStep);
-			auto sinStep = sin(angleStep);
+			auto cosStep = cos(angleStep );
+			auto sinStep = sin(angleStep );
 
-			auto x = sin(angle / 2.0);
-			auto y = cos(angle / 2.0);
+			auto x = sin(angle / 2.0 + theta);
+			auto y = cos(angle / 2.0 + theta);
 			while (vertices--) {
 				add(x, y, 0);
 				auto nextX = cosStep * x - sinStep * y;

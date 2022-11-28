@@ -13,8 +13,8 @@ namespace cg
 			wrappingBox.b_x *= s_x;
 			wrappingBox.b_y *= s_y;
 			boundaryCheck(w_e, wrappingBox.b_x * 2, 100.0F);
-			boundaryCheck(delta_he, r_e > 1 ? wrappingBox.b_y : 0.0F, 10.0F);
-			boundaryCheck(delta_we, r_e > 1 ? wrappingBox.b_x : 0.0F, 10.0F);
+			boundaryCheck(delta_we, r_e > 1  and delta_he < wrappingBox.b_y? wrappingBox.b_x : 0.0F, 10.0F);
+			boundaryCheck(delta_he, r_e > 1  and delta_we < wrappingBox.b_x? wrappingBox.b_y : 0.0F, 10.0F);
 			boundaryCheck(s_x, 0.0F, FLT_MAX);
 			boundaryCheck(s_y, 0.0F, FLT_MAX);
 			boundaryCheck(r_e, 0.1F, 100.0F);

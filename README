@@ -21,4 +21,4 @@ A implementação das varreduras encontra-se nos arquivos GeneretrixSweeper.h,
 SpiralSweeper.h e TwistSweeper.h.
 A implementação da escrita do arquivo OBJ encontra-se no aquivo MeshWriter.h.
 A implementação da superamostragem adaptativa encontra-se no arquivo RayTracer.h.
-O arquivo de cena gerado encontra-se em TODO.
+O arquivo de cena gerado encontra-se em assets.
